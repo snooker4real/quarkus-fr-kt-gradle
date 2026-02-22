@@ -56,11 +56,45 @@ If you want to learn more about building native executables, please consult <htt
 ## Related Guides
 
 - Kotlin ([guide](https://quarkus.io/guides/kotlin)): Write your services in Kotlin
+- Quarkus REST + Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): JSON serialization for REST endpoints
+- Hibernate ORM with Panache for Kotlin ([guide](https://quarkus.io/guides/hibernate-orm-panache-kotlin)): Simplified ORM with active record and repository patterns
+- Quarkus Dev Services ([guide](https://quarkus.io/guides/dev-services)): Zero-config databases and brokers in dev/test mode
+- SmallRye OpenAPI ([guide](https://quarkus.io/guides/openapi-swaggerui)): Expose OpenAPI spec and Swagger UI at `/q/swagger-ui`
+- Quarkus Validation ([guide](https://quarkus.io/guides/validation)): Bean Validation with `@Valid`, `@NotNull`, etc.
 
-## Provided Code
+## Adding Persistence with Panache
 
-### REST
+Add to `build.gradle`:
 
-Easily start your REST Web Services
+```groovy
+implementation 'io.quarkus:quarkus-hibernate-orm-panache-kotlin'
+implementation 'io.quarkus:quarkus-jdbc-postgresql'   // or quarkus-jdbc-h2 for tests
+```
 
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+Configure `application.properties`:
+
+```properties
+quarkus.datasource.db-kind=postgresql
+quarkus.datasource.username=myuser
+quarkus.datasource.password=mypassword
+quarkus.datasource.jdbc.url=jdbc:postgresql://localhost:5432/mydb
+quarkus.hibernate-orm.database.generation=update
+```
+
+Entity example (active record pattern):
+
+```kotlin
+@Entity
+class Person : PanacheEntity() {
+    lateinit var name: String
+}
+```
+
+Repository example:
+
+```kotlin
+@ApplicationScoped
+class PersonRepository : PanacheRepository<Person>
+```
+
+> In dev mode, Quarkus Dev Services automatically starts a PostgreSQL container — no local DB needed.
