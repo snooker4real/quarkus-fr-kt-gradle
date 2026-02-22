@@ -9,6 +9,6 @@ import jakarta.ws.rs.core.MediaType
 class GreetingResource {
 
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    fun hello() = "Hello from Quarkus Kt"
+    @Produces(MediaType.APPLICATION_JSON)
+    fun hello() = Greeting("hello")
 }
